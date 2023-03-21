@@ -1,7 +1,7 @@
 version: '3'
 services:
   blog:
-    image: mayatskiy/blog
+    image: mayatskiy/blog:prod
     restart: always
     env_file: .env
     environment:
@@ -16,6 +16,8 @@ services:
       NODE_ENV: production
     deploy:
       replicas: 1
+    ports:
+      - '1337:1337'
     depends_on:
       - blogDB
 
@@ -29,6 +31,8 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
     volumes:
       - blog-data:/var/lib/postgresql/data/
+    ports:
+      - '5432:5432'
 
 volumes:
   blog-data:
