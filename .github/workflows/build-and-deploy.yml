@@ -20,12 +20,14 @@ jobs:
       - name: Push Docker image
         run: docker push mayatskiy/blog:prod
       - name: Deploy to server
-        uses: easingthemes/ssh-deploy@v2.0.0
-        with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-          # ssh-known-hosts: ${{ secrets.SERVER_SSH_KNOWN_HOSTS }}
-          remote-username: ${{ secrets.SERVER_USERNAME }}
-          remote-host: ${{ secrets.SERVER_HOST }}
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          # ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "blog/"
+          REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+          TARGET: ${{secrets.target}}
           local-folder: .
           remote-folder: /root/blog
           commands: |
