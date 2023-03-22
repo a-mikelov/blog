@@ -1,0 +1,35 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build --build-arg NODE_ENV=production --build-arg STRAPI_URL=http://mayatskiy.top -t mayatskiy/blog:prod -f Dockerfile.prod .
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push Docker image
+        run: docker push mayatskiy/blog:prod
+      - name: Deploy to server
+        uses: easingthemes/ssh-deploy@v2.0.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+          # ssh-known-hosts: ${{ secrets.SERVER_SSH_KNOWN_HOSTS }}
+          remote-username: ${{ secrets.SERVER_USERNAME }}
+          remote-host: ${{ secrets.SERVER_HOST }}
+          local-folder: .
+          remote-folder: /root/blog
+          commands: |
+            cd /root/blog
+            git pull
+            docker pull mayatskiy/blog:prod
+            docker-compose -f docker-compose.production.yml up -d  
