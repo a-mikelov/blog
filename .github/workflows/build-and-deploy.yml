@@ -26,7 +26,6 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          # port: ${{ secrets.PORT }}
           script: |
             cd /blog
             git pull
