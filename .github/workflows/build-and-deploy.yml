@@ -20,18 +20,14 @@ jobs:
       - name: Push Docker image
         run: docker push mayatskiy/blog:prod
       - name: Deploy to server
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          # ARGS: "-rlgoDzvc -i --delete"
-          SOURCE: "blog/"
-          REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
-          TARGET: ${{secrets.target}}
-          local-folder: .
-          remote-folder: /root/blog
-          commands: |
-            cd /root/blog
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          # port: ${{ secrets.PORT }}
+          script: |
+            cd /blog
             git pull
             docker pull mayatskiy/blog:prod
             docker-compose -f docker-compose.production.yml up -d  
