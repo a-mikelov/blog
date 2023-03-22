@@ -27,7 +27,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /blog
+            cd blog
             git pull
             docker pull mayatskiy/blog:prod
             docker-compose -f docker-compose.production.yml up -d  
